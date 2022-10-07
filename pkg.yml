@@ -1,0 +1,32 @@
+---
+- name: Install And Start Apache And Ftp Service
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: "Check if packages is installed"
+      command: rpm -q httpd vsftpd
+      register: package_check
+      ignore_errors: yes
+
+    - name: Install Apache
+      yum:
+         name: httpd
+         state: installed
+      when: package_check is failed
+
+    - name: Start Apache Service
+      service:
+             name: httpd
+             state: started
+
+    - name: Install Ftp
+      yum:
+         name: vsftpd
+         state: installed
+      when: package_check is failed
+
+    - name: Start Ftp  Service
+      service:
+             name: vsftpd
+             state: started
